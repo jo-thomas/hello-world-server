@@ -1,0 +1,133 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "hello-world-server",
+    "version": "1.0"
+  },
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "endpoints",
+      "description": "available endpoints for hello-world-server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "endpoints"
+        ],
+        "summary": "Respond 'hello world'",
+        "description": "should respond 'hello world'",
+        "produces": [
+          "text/plain"
+        ],
+        "responses": {
+          "200": {
+            "description": "generates transformation of 'hello world' based on query parameters",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "text/plain": "hello world"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "reverse",
+            "in": "query",
+            "description": "if true should return the reverse of the string",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "uppercase",
+            "in": "query",
+            "description": "if true should return the string but capitalized",
+            "required": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    "/hello": {
+      "get": {
+        "tags": [
+          "endpoints"
+        ],
+        "summary": "Returns 'hello'",
+        "description": "returns 'hello'",
+        "produces": [
+          "text/plain;"
+        ],
+        "responses": {
+          "200": {
+            "description": "generates transformation of 'hello' based on query parameters",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "text/plain": "hello"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "reverse",
+            "in": "query",
+            "description": "if true should return the reverse of the string",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "uppercase",
+            "in": "query",
+            "description": "if true should return the string but capitalized",
+            "required": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    "/world": {
+      "get": {
+        "tags": [
+          "endpoints"
+        ],
+        "summary": "Returns 'world'",
+        "description": "Generates a greeting message.",
+        "produces": [
+          "text/plain;"
+        ],
+        "responses": {
+          "200": {
+            "description": "returns transformation of 'world' based on query parameters",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "text/plain": "hello"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "reverse",
+            "in": "query",
+            "description": "if true should return the reverse of the string",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "uppercase",
+            "in": "query",
+            "description": "if true should return the string but capitalized",
+            "required": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  }
+}
