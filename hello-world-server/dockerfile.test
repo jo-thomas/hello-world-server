@@ -1,0 +1,5 @@
+FROM hello-world-server:latest
+
+RUN npm update && npm install
+
+CMD ["npm", "test"]
