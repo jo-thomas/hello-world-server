@@ -1,18 +1,23 @@
 {
-  "name": "hello-world",
+  "name": "hello-world-server",
   "version": "1.0.0",
   "description": "Hello World Http Server",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --exit"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "express": "^4.16.3",
+    "mocha": "^5.0.5",
+    "swagger-ui-express": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jo-thomas/hello-world-server"
   },
   "author": "Joji Thomas",
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "express": "^4.16.3"
-  },
-  "dependencies": {
-    "swagger-ui-express": "^3.0.6"
-  }
+  "license": "UNLICENSED"
 }

@@ -1,14 +1,15 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+
 const APP = express();
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-//express.js swagger-ui middlware function, servers docs at /api-docs using ./swagger.json spec
+//express.js swagger-ui middlware function, serves docs at /api-docs using ./swagger.json spec
 APP.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-//process query params, to expected string
+//middleware function process query params, to expected string
 function applyQueryParams(string){
   return function (request, response, next) {
     returnString = string
@@ -25,19 +26,33 @@ function applyQueryParams(string){
 
 //GET / should respond "hello world"
 APP.get('/', applyQueryParams('hello world'), function(request, response){
-  response.send(returnString);
+  response.format({
+    'text/plain': function(){
+      response.send(returnString);
+    }
+  });
 });
 
 //GET /hello should respond "hello"
 APP.get('/hello', applyQueryParams('hello'), function(request, response){
-  response.send(returnString);
+  response.format({
+    'text/plain': function(){
+      response.send(returnString);
+    }
+  });
 });
 
 //GET /world should respond "world"
 APP.get('/world', applyQueryParams('world'), function(request, response){
-  response.send(returnString);
+  response.format({
+    'text/plain': function(){
+      response.send(returnString);
+    }
+  });
 });
 
 //Set APP Host and port
 APP.listen(PORT, HOST)
 console.log(`Listening on port ${PORT}`);
+
+module.exports = APP;
