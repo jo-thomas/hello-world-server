@@ -98,7 +98,8 @@ Currently is the pipeline is setup to pull source-code, build & test, package Co
 The goal of the pipeline was to do
                                                   -> run container tests  
 source-code -> build & test -> package container  -> run integration tests -> deploy container from registry
-####Currently experiencing a blocker
+
+### Currently experiencing a blocker
 ```
 `It doesn't appear that given Dockerfile: "hello-world-server/Dockerfile" is a file`
 The reference is made in the pipeline to
