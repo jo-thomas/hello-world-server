@@ -1,0 +1,54 @@
+resources:
+  - name: source-code
+    type: git
+    source:
+      uri: https://github.com/jo-thomas/test-concourse.git
+      branch: master
+
+  - name: hello-world-server-image
+    type: docker-image
+    source:
+      repository: http://0.0.0.0:5000/hello-world-server
+
+jobs:
+  - name: build & test
+    disable_manual_trigger: false
+    plan:
+      - get: source-code
+        trigger: true
+
+      - task: test
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: node, tag: "9" }
+          inputs:
+            - name: source-code
+              path: .
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                ls -al
+                cd hello-world-server
+                ls -al
+                npm install
+                npm test
+
+  - name: publish container
+    plan:
+      - get: source-code
+      - put: hello-world-server-image
+        params: {build: source-code, dockerfile: hello-world-server/Dockerfile}
+      - task: run
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: http://localhost:5000/hello-world-server
+          run:
+            path: exit
+            args: []
