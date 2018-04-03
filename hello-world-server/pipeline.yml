@@ -2,7 +2,7 @@ resources:
   - name: source-code
     type: git
     source:
-      uri: https://github.com/jo-thomas/test-concourse.git
+      uri: https://github.com/jo-thomas/hello-world-server.git
       branch: master
 
   - name: hello-world-server-image
