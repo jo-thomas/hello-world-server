@@ -98,12 +98,14 @@ Currently is the pipeline is setup to pull source-code, build & test, package Co
 The goal of the pipeline was to do
                                                   -> run container tests  
 source-code -> build & test -> package container  -> run integration tests -> deploy container from registry
-##Currently the blocker I am experiecing is this error
-## `It doesn't appear that given Dockerfile: "hello-world-server/Dockerfile" is a file`
-##The reference is made in the pipeline to
-## plan:
-##  - get: source-code
-##I am unable to use get the source-code, to navigate to Dockerfile
-##  - put: hello-world-server-image
-##    params: {build: source-code, dockerfile: hello-world-server/Dockerfile}
+```
+Currently the blocker I am experiecing is this error
+`It doesn't appear that given Dockerfile: "hello-world-server/Dockerfile" is a file`
+The reference is made in the pipeline to
+  plan:
+    - get: source-code
+I am unable to use get the source-code, to navigate to Dockerfile
+  - put: hello-world-server-image
+    params: {build: source-code, dockerfile: hello-world-server/Dockerfile}
 Still working through debugging the issue
+```
