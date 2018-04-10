@@ -5,24 +5,18 @@ resources:
       uri: https://github.com/jo-thomas/hello-world-server.git
       branch: master
 
-  - name: hello-world-server-image
-    type: docker-image
-    source:
-      repository: http://0.0.0.0:5000/hello-world-server
-
 jobs:
-  - name: build & test
+  - name: Test_Commit
     disable_manual_trigger: false
     plan:
       - get: source-code
         trigger: true
-
       - task: test
         config:
           platform: linux
           image_resource:
             type: docker-image
-            source: {repository: node, tag: "9" }
+            source: {repository: node, tag: "latest" }
           inputs:
             - name: source-code
               path: .
@@ -31,24 +25,89 @@ jobs:
             args:
               - -exc
               - |
-                ls -al
                 cd hello-world-server
-                ls -al
                 npm install
                 npm test
 
-  - name: publish container
+  - name: Test_Container
+    disable_manual_trigger: false
     plan:
       - get: source-code
-      - put: hello-world-server-image
-        params: {build: source-code, dockerfile: hello-world-server/Dockerfile}
-      - task: run
+        trigger: true
+      - task: test container
+        privileged: true
         config:
           platform: linux
           image_resource:
             type: docker-image
-            source:
-              repository: http://localhost:5000/hello-world-server
+            source: { repository: amidos/dcind, tag: "latest" }
+          inputs:
+            - name: source-code
+              path: .
           run:
-            path: exit
-            args: []
+            path: sh
+            args:
+              - -exc
+              - |
+                export GOSS_FILES_STRATEGY=cp
+                curl -fsSL https://goss.rocks/install | sh
+                source /docker-lib.sh
+                start_docker
+                cd hello-world-server
+                docker build -t hello-world-server .
+                dgoss run -p 80:8080 -d hello-world-server
+
+  - name: Tests_In_Container
+    disable_manual_trigger: false
+    plan:
+      - get: source-code
+        passed: [Test_Commit]
+      - task: tests in container
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: { repository: amidos/dcind, tag: "latest" }
+          inputs:
+            - name: source-code
+              path: .
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                source /docker-lib.sh
+                start_docker
+                cd hello-world-server
+                docker build -t hello-world-server .
+                docker build -t hello-world-server-test -f Dockerfile.test .
+                docker run --rm hello-world-server-test
+
+  - name: Publish_Container
+    disable_manual_trigger: false
+    plan:
+      - get: source-code
+        passed: [Tests_In_Container]
+        trigger: true
+      - task: publish to registry
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: { repository: amidos/dcind, tag: "latest" }
+          inputs:
+            - name: source-code
+              path: .
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                source /docker-lib.sh
+                start_docker
+                cd hello-world-server
+                docker build -t hello-world-server .
+                docker tag hello-world-server:latest 127.0.0.1:5000/hello-world-server:latest
+                docker push 127.0.0.1:5000/hello-world-server:latest

@@ -61,15 +61,12 @@ Testing the container:
 
 ### Part 3:  Continuous Integration
 
-I feel like wrong even looking at a different CI server after all these years of Jenkins. Once I read Pivitol created it, I knew I was in trouble. If its anything like cloud foundry, extremely opinionated, then there will only be one way to do anything.
 Started walking through tutorials and I am taking a deeper dive into the documentation.
-
 
 Setup local concourse-ci instance, this starts a postgres db, concourse ci server, private docker registry
 ```
 > cd concourse-docker
 > docker-compose -f docker-compose.yml up
-
 ```
 
 Set up fly cli
@@ -81,7 +78,15 @@ click download cli for os of mac
 ```
 
 localhost:80 should return concourse-ci
-localhost:5000/v2 should return header docker-distribution-api-version: registry/2.0
+http://localhost:5000/v2/_catalog should return empty repository json
+Additional Test for local registry:
+```
+> cd hello-world-server
+> docker tag hello-world-server:latest localhost:5000/hello-world-server:latest
+> docker push localhost:5000/hello-world-server:latest
+http://localhost:5000/v2/_catalog should return updated json
+```
+
 
 Setting up Pipeline, create a pipeline called hello-world-server, using pipeline.yml
 ```
@@ -91,22 +96,24 @@ Setting up Pipeline, create a pipeline called hello-world-server, using pipeline
 > fly up -t hello-world-server -p hello-world-server //unpause pipeline
 ```
 
-Navigate to http:localhost:80, select login at top right, select Team as main, click login button
+Navigate to http//:localhost:80, select login at top right, select Team as main, click login button
 hello-world-server pipeline should be displayed
 
 Currently is the pipeline is setup to pull source-code, build & test, package Container
 The goal of the pipeline was to do
-                                                  -> run container tests  
-source-code -> build & test -> package container  -> run integration tests -> deploy container from registry
 
-### Currently experiencing a blocker
+source-code -> Test Code    -> Run Integration Test -> publish to registry -> Deploy 
+            -> Test Container
+#
+
+Blockers:
+* Test Container step is giving me issue that sh: dgoss: not found, after a bit of research it seems like an issue with how goss/dgoss is attached to the container. https://github.com/aelsabbahy/goss/issues/237
+* Publish to registry is giving me issue that it is trying to reach the v1 api, even though the registry is configured to v2. It seems like having a private docker registry has some issues with concourse. Looking through documentation how to specify registry differently.
+Might have been easier just sticking to dockerhub.
+
+
+Shut it Down
 ```
-`It doesn't appear that given Dockerfile: "hello-world-server/Dockerfile" is a file`
-The reference is made in the pipeline to
-  plan:
-    - get: source-code
-I am unable to use get the source-code, to navigate to Dockerfile
-  - put: hello-world-server-image
-    params: {build: source-code, dockerfile: hello-world-server/Dockerfile}
-Still working through debugging the issue
+> cd concourse-docker
+> docker-compose -f docker-compose.yml down --remove-orphans
 ```
