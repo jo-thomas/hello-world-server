@@ -40,7 +40,7 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: { repository: amidos/dcind, tag: "latest" }
+            source: { repository: amidos/dcind }
           inputs:
             - name: source-code
               path: .
@@ -49,13 +49,18 @@ jobs:
             args:
               - -exc
               - |
-                export GOSS_FILES_STRATEGY=cp
-                curl -fsSL https://goss.rocks/install | sh
+                apk --no-cache add bash
                 source /docker-lib.sh
                 start_docker
                 cd hello-world-server
                 docker build -t hello-world-server .
-                dgoss run -p 80:8080 -d hello-world-server
+                export GOSS_FILES_STRATEGY=cp
+                curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.5/goss-linux-amd64 -o /usr/local/bin/goss
+                chmod +rx /usr/local/bin/goss
+                curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+                chmod +rx /usr/local/bin/dgoss
+                dgoss run -p 8080:8080 hello-world-server:latest
+
 
   - name: Tests_In_Container
     disable_manual_trigger: false
@@ -68,7 +73,7 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: { repository: amidos/dcind, tag: "latest" }
+            source: { repository: amidos/dcind }
           inputs:
             - name: source-code
               path: .
@@ -96,7 +101,7 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: { repository: amidos/dcind, tag: "latest" }
+            source: { repository: amidos/dcind }
           inputs:
             - name: source-code
               path: .
@@ -105,9 +110,11 @@ jobs:
             args:
               - -exc
               - |
+                export DOCKER_OPTS="$DOCKER_OPTS --insecure-registry=127.0.0.1:5000"
                 source /docker-lib.sh
                 start_docker
                 cd hello-world-server
                 docker build -t hello-world-server .
+                docker info
                 docker tag hello-world-server:latest 127.0.0.1:5000/hello-world-server:latest
                 docker push 127.0.0.1:5000/hello-world-server:latest

@@ -2,7 +2,7 @@ package:
   nodejs:
     installed: true
     versions:
-    - 6.12.3
+    - 6.14.0
   npm:
     installed: true
     versions:
