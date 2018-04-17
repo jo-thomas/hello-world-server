@@ -107,8 +107,7 @@ source-code -> Test Code    -> Run Integration Test -> publish to registry -> De
 #
 
 Blockers:
-* Test Container step is giving me issue that sh: dgoss: not found, after a bit of research it seems like an issue with how goss/dgoss is attached to the container. https://github.com/aelsabbahy/goss/issues/237
-* Publish to registry is giving me issue that it is trying to reach the v1 api, even though the registry is configured to v2. It seems like having a private docker registry has some issues with concourse. Looking through documentation how to specify registry differently.
+* Publish to registry is giving me issue I beleive its because its a insecure registry and connecting to it using the docker-resourse-image isnt returning the appropriate results.
 Might have been easier just sticking to dockerhub.
 
 
